@@ -24,16 +24,14 @@ pygame.display.set_caption("Basic pygame")
 
 """"""""""""""""""""""""""""""""""""""
 #Version super optimisé avec le tableau des distances et la révision du code pour augmenter la performance
-#Tranformation du tableau commun des distances en tableau commun des normes
-#Ajout d'un vecteur pour plus de réalsime lorsque les boids sont proche de la bordure
 """"""""""""""""""""""""""""""""""""""
 
 class Boids():
 
-    tab_norme = np.array([[]], dtype=np.int32)
+    tab_norme = np.array([[]])
 
     def __init__(self,  colour, len, speed_max,  perception, max_force) -> None:
-        self.orientation = (np.random.rand(2) -0.5 ) * math.pi
+        self.orientation = (np.random.rand(2) - 0.5 ) * math.pi
         self.position = np.array([np.random.rand() * WIDTH, np.random.rand() * HEIGHT])
         self.colour = colour
         self.len = len
@@ -41,7 +39,7 @@ class Boids():
         self.max_force = max_force
 
         #Vitesse
-        self.speed = (np.random.rand(2) -0.5 ) * 5
+        self.speed = (np.random.rand(2) - 0.5 ) * 5
         self.speed_max = speed_max 
 
     def calcul_distance(self, index, list_boids):
@@ -50,25 +48,25 @@ class Boids():
         #Récupératoin des distance
         """"""""""""""""""""""""""""""""""""""
         #Initialisation
-        list_norme = np.array([],dtype=np.int32) 
+        list_norme = np.array([]) 
          
         #Si c'est le premier boid initialisation du tableau des distances communes
         if index == 0:
-            Boids.tab_norme = np.array([], dtype=np.int32)
+            Boids.tab_norme = np.array([])
 
         #Sinon on recopie les valeurs déjà trouvers
         else:
-            list_norme = np.append(list_norme, Boids.tab_norme[:, index-1])
+            list_norme = np.append(list_norme, -1 * Boids.tab_norme[:, index -1])
 
         #Pour chaque autre boids, calcul des distances        
         for other_boids in list_boids[index+1:]:
 
-            #Calcul de la norme euclidienne
-            norme = np.int32(np.linalg.norm(other_boids.position - self.position))
+            #Calcul des distances
+            norme = other_boids.position - self.position
             list_norme = np.append(list_norme, norme)
 
         Boids.tab_norme = np.append(Boids.tab_norme, list_norme)
-        Boids.tab_norme = Boids.tab_norme.reshape((index+1, len(list_boids)-1))
+        Boids.tab_norme = Boids.tab_norme.reshape((index +1, len(list_boids) -1 , 2))
 
     def comportement(self, index, list_boid, filter):
 
@@ -85,13 +83,12 @@ class Boids():
         average_vecteur_3 = np.zeros((2)) #Vecteur moyen
         
         total = 0
-        epsilon = 1e-3
         
         #Pour tout les autres boids
         for sub_index, boid in enumerate (list_boid[filter]):
             
             #Si la norme euclidienne est plus petite que la distance de percepetion alors 
-            distance = Boids.tab_norme[index, sub_index]
+            distance =  np.linalg.norm(Boids.tab_norme[index, sub_index, :])
             if distance < self.perception:
 
                 total += 1
@@ -99,10 +96,8 @@ class Boids():
                 #Alignement
                 average_vecteur_1 += boid.speed
                 
-
                 #Cohesion
                 center_mass += boid.position
-
 
                 #Séparation
                 diff = self.position - boid.position
@@ -129,7 +124,7 @@ class Boids():
             average_vecteur_1 = average_vecteur_1 / total
 
             #Normalisation du vecteur moyen et multiplication par la vitesse max
-            average_vecteur_1 = (average_vecteur_1 / (np.linalg.norm(average_vecteur_1) + epsilon)) * self.speed_max
+            average_vecteur_1 = (average_vecteur_1 / np.linalg.norm(average_vecteur_1)) * self.speed_max
             vecteur_directeur_1 = average_vecteur_1 - self.speed
         
 
@@ -146,7 +141,7 @@ class Boids():
             vecteur_directeur_2 = vecteur_to_com - self.speed
             
             #Normalisation du vecteur directeur
-            if np.linalg.norm(vecteur_directeur_2)> self.max_force:
+            if np.linalg.norm(vecteur_directeur_2) > self.max_force:
                 vecteur_directeur_2 = (vecteur_directeur_2 / np.linalg.norm(vecteur_directeur_2)) * self.max_force
 
       
@@ -157,10 +152,10 @@ class Boids():
             vecteur_directeur_3 = average_vecteur_3 - self.speed
                 
             #Normalisation du vecteur directeur
-            if np.linalg.norm(vecteur_directeur_3)> self.max_force:
+            if np.linalg.norm(vecteur_directeur_3) > self.max_force:
                 vecteur_directeur_3 = (vecteur_directeur_3 / np.linalg.norm(vecteur_directeur_3)) * self.max_force
         
-        self.speed += vecteur_directeur_1  + vecteur_directeur_2 + vecteur_directeur_3
+        self.speed += vecteur_directeur_1 + vecteur_directeur_2 + vecteur_directeur_3
 
 
 
@@ -176,35 +171,31 @@ class Boids():
         
         #Vérifie que les boids ne sorte pas de l'écran
         if self.position[0] - self.perception < 0:
-            distance =  np.linalg.norm(np.array([0, self.position[1]] - self.position))
+            distance = np.linalg.norm(np.array([0, self.position[1]] - self.position))
             diff = self.position - np.array([0, self.position[1]])
             diff = diff / distance
             vecteur_directeur = diff - self.speed
-            vecteur_directeur += np.array([0, 1])
             self.speed += vecteur_directeur
 
         elif self.position[0] + self.perception > WIDTH:
-            distance =  np.linalg.norm(np.array([WIDTH, self.position[1]] - self.position))
+            distance = np.linalg.norm(np.array([WIDTH, self.position[1]] - self.position))
             diff = self.position - np.array([WIDTH, self.position[1]])
             diff = diff / distance
             vecteur_directeur = diff - self.speed
-            vecteur_directeur += np.array([0, - 1])
             self.speed += vecteur_directeur
 
         if self.position[1] - self.perception < 0:
-            distance =  np.linalg.norm(np.array([self.position[0], 0] - self.position))
+            distance = np.linalg.norm(np.array([self.position[0], 0] - self.position))
             diff = self.position - np.array([self.position[0], 0])
             diff = diff / distance
             vecteur_directeur = diff - self.speed
-            vecteur_directeur += np.array([-1, 0])
             self.speed += vecteur_directeur
 
         elif self.position[1] + self.perception > HEIGHT:
-            distance =  np.linalg.norm(np.array([self.position[0], HEIGHT] - self.position))
+            distance = np.linalg.norm(np.array([self.position[0], HEIGHT] - self.position))
             diff = self.position - np.array([self.position[0], HEIGHT])
             diff = diff / distance
             vecteur_directeur = diff - self.speed
-            vecteur_directeur += np.array([1, 0])
             self.speed += vecteur_directeur
         
 
@@ -247,8 +238,8 @@ if __name__ == "__main__":
 
     def main():
 
-        nb_boids = 100
-        list_boids = np.array([Boids(RED, 10, 5, 60, 0.01) for _ in range(nb_boids)])
+        nb_boids = 90
+        list_boids = np.array([Boids(RED, 10, 5, 60, 0.05) for _ in range(nb_boids)])
 
 
         # Boucle principale
@@ -260,11 +251,14 @@ if __name__ == "__main__":
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        running = False
 
             clock.tick(60)
             WIN.fill(BLUE_OCEAN)
 
-            
             for index, boid in enumerate(list_boids):
 
                 #Calcul des normes entres les boids

@@ -27,7 +27,7 @@ pygame.display.set_caption("Basic pygame")
 class Boids():
 
     def __init__(self,  colour, len, speed_max,  perception, max_force) -> None:
-        self.orientation = (np.random.rand(2) -0.5 ) * math.pi
+        self.orientation = (np.random.rand(2) - 0.5 ) * math.pi
         self.position = np.random.rand((2))  * HEIGHT 
         self.colour = colour
         self.len = len
@@ -35,7 +35,7 @@ class Boids():
         self.max_force = max_force
 
         #Vitesse
-        self.speed = (np.random.rand(2) -0.5 ) * 5
+        self.speed = (np.random.rand(2) - 0.5 ) * 5
         self.speed_max = speed_max 
 
     
@@ -84,7 +84,7 @@ class Boids():
 
             vecteur_directeur = vecteur_to_com - self.speed
             
-            if np.linalg.norm(vecteur_directeur)> self.max_force:
+            if np.linalg.norm(vecteur_directeur) > self.max_force:
                 vecteur_directeur = (vecteur_directeur / np.linalg.norm(vecteur_directeur)) * self.max_force
 
         self.speed += vecteur_directeur
@@ -103,13 +103,13 @@ class Boids():
                 diff = self.position - boid.position
                 diff = diff / distance
                 average_vecteur += diff
-                total +=1
+                total += 1
 
             if total > 0:
                 average_vecteur = average_vecteur / total
                 vecteur_directeur = average_vecteur - self.speed
 
-                if np.linalg.norm(vecteur_directeur)> self.max_force:
+                if np.linalg.norm(vecteur_directeur) > self.max_force:
                     vecteur_directeur = (vecteur_directeur / np.linalg.norm(vecteur_directeur)) * self.max_force
         
         self.speed += vecteur_directeur
@@ -199,6 +199,10 @@ if __name__ == "__main__":
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        running = False
 
             clock.tick(60)
             WIN.fill(WHITE)

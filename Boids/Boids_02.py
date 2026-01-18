@@ -25,7 +25,7 @@ class Boids():
     tab_distance_x = np.array([[]])
     tab_distance_y = np.array([[]])
 
-    def __init__(self, orientation, position, colour, len, speed, speed_rotation,  distance_cohesion, distance_alignement, distance_separation) -> None:
+    def __init__(self, orientation, position, colour, len, speed, speed_rotation, distance_cohesion, distance_alignement, distance_separation) -> None:
         self.orientation = orientation
         self.position = position
         self.colour = colour
@@ -65,8 +65,8 @@ class Boids():
 
             #Sinon on recopie les valeurs déjà trouvers
             else:
-                list_distance_x = np.append(list_distance_x, -1*Boids.tab_distance_x[:, index-1])
-                list_distance_y = np.append(list_distance_y, -1*Boids.tab_distance_y[:, index-1])
+                list_distance_x = np.append(list_distance_x, -1 * Boids.tab_distance_x[:, index -1])
+                list_distance_y = np.append(list_distance_y, -1 * Boids.tab_distance_y[:, index -1])
 
             #Pour chaque autre boids, calcul des distances        
             for other_boids in list_boids[index:]:
@@ -77,7 +77,7 @@ class Boids():
 
                 else:
                     #Calcul des distances
-                    distance_x = other_boids.get_position()[0] -self.get_position()[0]
+                    distance_x = other_boids.get_position()[0] - self.get_position()[0]
                     distance_y = other_boids.get_position()[1] - self.get_position()[1]
                     list_distance_x = np.append(list_distance_x, distance_x)
                     list_distance_y = np.append(list_distance_y, distance_y)
@@ -85,11 +85,11 @@ class Boids():
             #On ajoute les distances au tableau de toutes les distances
             #X
             Boids.tab_distance_x = np.append(Boids.tab_distance_x, list_distance_x)
-            Boids.tab_distance_x = Boids.tab_distance_x.reshape((index+1, len(list_boids)-1))
+            Boids.tab_distance_x = Boids.tab_distance_x.reshape((index+1, len(list_boids) -1))
 
             #Y
             Boids.tab_distance_y = np.append(Boids.tab_distance_y, list_distance_y)
-            Boids.tab_distance_y = Boids.tab_distance_y.reshape((index+1, len(list_boids)-1))
+            Boids.tab_distance_y = Boids.tab_distance_y.reshape((index+1, len(list_boids) -1))
 
             shape = Boids.tab_distance_y.shape
 
@@ -122,14 +122,14 @@ class Boids():
                 all_orienetatoin = 0
                 for index_ali, distance_ali in enumerate (tab_distance[index,:]):
                     if (distance_ali < distance_alignement) and (distance_ali > distance_separation):
-                        nb_neighbor +=1
+                        nb_neighbor += 1
 
                         if index_ali > index:
-                            index_ali +=1
+                            index_ali += 1
 
                         all_orienetatoin += list_boids[index_ali].get_orientation()
 
-                if nb_neighbor ==0:
+                if nb_neighbor == 0:
                     nb_neighbor = 1
 
                 self.orientation -= all_orienetatoin / nb_neighbor
@@ -208,9 +208,8 @@ class Boids():
         pygame.draw.line(WIN, colour, position, new_tail_1, 2)
         pygame.draw.line(WIN, colour, position, new_tail_2, 2)
         
-        """
-        pygame.draw.circle(WIN, BLACK, position, self.distance_separation, 2)
-        pygame.draw.circle(WIN, BLACK, position, self.distance_cohension, 2)"""
+        #pygame.draw.circle(WIN, BLACK, position, self.distance_separation, 2)  Draw circle to distance of separation
+        #pygame.draw.circle(WIN, BLACK, position, self.distance_cohension, 2)   Draw circle to distance of cohension
 
 def main():
 
@@ -237,6 +236,10 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    running = False
 
         clock.tick(60)
         WIN.fill(WHITE)

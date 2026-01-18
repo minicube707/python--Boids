@@ -38,7 +38,7 @@ class Boids():
     tab_norme = np.array([[]])
 
     def __init__(self,  colour=tuple(), len=int(), speed_max=int(), max_force=float(), distance_separation=int(), distance_alignement=int(), distance_cohesion=int()) -> None:
-        self.orientation = (np.random.rand(2) -0.5 ) * math.pi
+        self.orientation = (np.random.rand(2) - 0.5 ) * math.pi
         self.position = np.array([np.random.rand() * WIDTH, np.random.rand() * HEIGHT])
         self.colour = colour
         self.len = len
@@ -48,7 +48,7 @@ class Boids():
         self.max_force = max_force
 
         #Vitesse
-        self.speed = (np.random.rand(2) -0.5 ) * 5
+        self.speed = (np.random.rand(2) - 0.5 ) * 5
         self.speed_max = speed_max 
 
     def calcul_distance(self, index=int(), list_boids=np.array([])):
@@ -65,17 +65,17 @@ class Boids():
 
         #Sinon on recopie les valeurs déjà trouvers
         else:
-            list_norme = np.append(list_norme, Boids.tab_norme[:, index-1])
+            list_norme = np.append(list_norme, Boids.tab_norme[:, index -1])
 
         #Pour chaque autre boids, calcul des distances        
-        for other_boids in list_boids[index+1:]:
+        for other_boids in list_boids[index +1:]:
 
             #Calcul des distances
             norme = np.int32(np.linalg.norm(other_boids.position - self.position))
             list_norme = np.append(list_norme, norme)
 
         Boids.tab_norme = np.append(Boids.tab_norme, list_norme)
-        Boids.tab_norme = Boids.tab_norme.reshape((index+1, len(list_boids)-1))
+        Boids.tab_norme = Boids.tab_norme.reshape((index +1, len(list_boids) -1))
 
     def comportement(self, index=int(), list_boid=np.array([]), filter=np.array([])):
 
@@ -161,7 +161,7 @@ class Boids():
             vecteur_directeur_2 = vecteur_to_com - self.speed
             
             #Normalisation du vecteur directeur
-            if np.linalg.norm(vecteur_directeur_2)> self.max_force:
+            if np.linalg.norm(vecteur_directeur_2) > self.max_force:
                 vecteur_directeur_2 = (vecteur_directeur_2 / np.linalg.norm(vecteur_directeur_2)) * self.max_force
 
         if total_separation > 0:
@@ -172,10 +172,10 @@ class Boids():
             vecteur_directeur_3 = average_vecteur_3 - self.speed
                 
             #Normalisation du vecteur directeur
-            if np.linalg.norm(vecteur_directeur_3)> self.max_force:
+            if np.linalg.norm(vecteur_directeur_3) > self.max_force:
                 vecteur_directeur_3 = (vecteur_directeur_3 /(np.linalg.norm(vecteur_directeur_3) + epsilon)) * self.max_force
         
-        self.speed += vecteur_directeur_1  + vecteur_directeur_2 + vecteur_directeur_3
+        self.speed += vecteur_directeur_1 + vecteur_directeur_2 + vecteur_directeur_3
 
 
 
@@ -188,8 +188,8 @@ class Boids():
         self.orientation = np.arctan2(-self.speed[1], self.speed[0]) 
         #Vérifie que les boids ne sorte pas de l'écran
         if border == True:
-            if self.position[0] - 5*self.len < 0:
-                distance =  np.linalg.norm(np.array([0, self.position[1]] - self.position))
+            if self.position[0] - 5 * self.len < 0:
+                distance = np.linalg.norm(np.array([0, self.position[1]] - self.position))
                 diff = self.position - np.array([0, self.position[1]])
                 diff = diff / distance
                 vecteur_directeur = diff - self.speed
@@ -197,8 +197,8 @@ class Boids():
                 add_speed += np.array([0, 1])
                 near_border = True
 
-            elif self.position[0] + 5*self.len > WIDTH:
-                distance =  np.linalg.norm(np.array([WIDTH, self.position[1]] - self.position))
+            elif self.position[0] + 5 * self.len > WIDTH:
+                distance = np.linalg.norm(np.array([WIDTH, self.position[1]] - self.position))
                 diff = self.position - np.array([WIDTH, self.position[1]])
                 diff = diff / distance
                 vecteur_directeur = diff - self.speed
@@ -206,8 +206,8 @@ class Boids():
                 add_speed += np.array([0, - 1])
                 near_border = True
 
-            if self.position[1] - 5*self.len < 0:
-                distance =  np.linalg.norm(np.array([self.position[0], 0] - self.position))
+            if self.position[1] - 5 * self.len < 0:
+                distance = np.linalg.norm(np.array([self.position[0], 0] - self.position))
                 diff = self.position - np.array([self.position[0], 0])
                 diff = diff / distance
                 vecteur_directeur = diff - self.speed
@@ -215,8 +215,8 @@ class Boids():
                 add_speed += np.array([-1, 0])
                 near_border = True
 
-            elif self.position[1] + 5*self.len > HEIGHT:
-                distance =  np.linalg.norm(np.array([self.position[0], HEIGHT] - self.position))
+            elif self.position[1] + 5 * self.len > HEIGHT:
+                distance = np.linalg.norm(np.array([self.position[0], HEIGHT] - self.position))
                 diff = self.position - np.array([self.position[0], HEIGHT])
                 diff = diff / distance
                 vecteur_directeur = diff - self.speed
@@ -306,6 +306,10 @@ if __name__ == "__main__":
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        running = False
 
             clock.tick(60)
             WIN.fill(BLUE_OCEAN)

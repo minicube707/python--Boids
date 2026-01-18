@@ -6,7 +6,9 @@ import random
 import multiprocessing as mp
 
 def Processing1(WIDTH, HEIGHT, list_chuck, border):
+
     list_animoid_update = []
+
     #Add the animoid in the eight neighbors cell, plus the cell himself
     for i in range(WIDTH//200):
         for j in range(HEIGHT//100):
@@ -62,6 +64,7 @@ def Processing1(WIDTH, HEIGHT, list_chuck, border):
 def Processing2(WIDTH, HEIGHT, list_chuck, border):
 
     list_animoid_update = []
+    
     #Add the animoid in the eight neighbors cell, plus the cell himself
     for i in range(WIDTH//200):
         i += WIDTH//200

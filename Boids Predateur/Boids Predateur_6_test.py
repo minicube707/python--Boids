@@ -136,7 +136,7 @@ class Animoid():
     def __init__(self, WIDTH, HEIGHT, colour, len, speed_max, max_force, distance_separation) -> None:
         self.WIDTH = WIDTH
         self.HEIGHT = HEIGHT
-        self.orientation = (np.random.rand() -0.5 ) * math.pi
+        self.orientation = (np.random.rand() - 0.5 ) * math.pi
         self.position = np.array([np.random.rand() * WIDTH, np.random.rand() * HEIGHT])
         self.colour = colour
         self.len = len
@@ -144,7 +144,7 @@ class Animoid():
         self.max_force = max_force
 
         #Vitesse
-        self.speed = (np.random.rand(2) -0.5 ) * 5
+        self.speed = (np.random.rand(2) - 0.5 ) * 5
         self.speed_max = speed_max 
 
 
@@ -161,7 +161,7 @@ class Animoid():
 
         #Vérifie que les boids ne sorte pas de l'écran
         if border == True:
-            if self.position[0] - 3*self.len < 0:
+            if self.position[0] - 3 * self.len < 0:
                 distance =  np.linalg.norm(np.array([0, self.position[1]] - self.position))
                 diff = self.position - np.array([0, self.position[1]])
                 diff = diff / distance
@@ -170,7 +170,7 @@ class Animoid():
                 add_speed += np.array([0, 1])
                 near_border = True
 
-            elif self.position[0] + 3*self.len > self.WIDTH:
+            elif self.position[0] + 3 * self.len > self.WIDTH:
                 distance =  np.linalg.norm(np.array([self.WIDTH, self.position[1]] - self.position))
                 diff = self.position - np.array([self.WIDTH, self.position[1]])
                 diff = diff / distance
@@ -179,7 +179,7 @@ class Animoid():
                 add_speed += np.array([0, - 1])
                 near_border = True
 
-            if self.position[1] - 3*self.len < 0:
+            if self.position[1] - 3 * self.len < 0:
                 distance =  np.linalg.norm(np.array([self.position[0], 0] - self.position))
                 diff = self.position - np.array([self.position[0], 0])
                 diff = diff / distance
@@ -188,7 +188,7 @@ class Animoid():
                 add_speed += np.array([-1, 0])
                 near_border = True
 
-            elif self.position[1] + 3*self.len > self.HEIGHT:
+            elif self.position[1] + 3 * self.len > self.HEIGHT:
                 distance =  np.linalg.norm(np.array([self.position[0], self.HEIGHT] - self.position))
                 diff = self.position - np.array([self.position[0], self.HEIGHT])
                 diff = diff / distance
@@ -314,7 +314,7 @@ class Boids(Animoid):
                 #Evite le
                 diff = self.position - list_class_pred[index].position
                 average_vecteur_3 += diff
-                total_preda +=1
+                total_preda += 1
                 flew = True
 
         #S'il y a un prédateur
@@ -323,7 +323,7 @@ class Boids(Animoid):
             vecteur_directeur_3 = average_vecteur_3 - self.speed
                     
             #Normalisation du vecteur directeur
-            vecteur_directeur_3  *= self.max_force_flew
+            vecteur_directeur_3 *= self.max_force_flew
             self.speed += vecteur_directeur_3
         
         #Sinon
@@ -398,7 +398,7 @@ class Boids(Animoid):
                 vecteur_directeur_2 = vecteur_to_com - self.speed
                 
                 #Normalisation du vecteur directeur
-                if np.linalg.norm(vecteur_directeur_2)> self.max_force:
+                if np.linalg.norm(vecteur_directeur_2) > self.max_force:
                     vecteur_directeur_2 = (vecteur_directeur_2 / np.linalg.norm(vecteur_directeur_2)) * self.max_force
 
             self.speed += vecteur_directeur_1 + vecteur_directeur_2 + vecteur_directeur_3
@@ -435,7 +435,7 @@ class Predator(Animoid):
                 #Séparation
                 diff = self.position - list_class_pred[index].position
                 average_vecteur_3 += diff
-                total_preda +=1
+                total_preda += 1
 
         #S'il y a un prédateur, on s'éloingne un peu
         if total_preda > 0:
@@ -454,7 +454,7 @@ class Predator(Animoid):
 
                 #Chasse
                 center_mass += list_class_boid[index].position
-                total +=1
+                total += 1
 
         #Random
         rand = random.randint(1, 50)
@@ -479,7 +479,7 @@ class Predator(Animoid):
             vecteur_directeur_2 = vecteur_to_com - self.speed
             
             #Normalisation du vecteur directeur
-            if np.linalg.norm(vecteur_directeur_2)> self.max_force:
+            if np.linalg.norm(vecteur_directeur_2) > self.max_force:
                 vecteur_directeur_2 = (vecteur_directeur_2 / np.linalg.norm(vecteur_directeur_2)) * self.max_force
 
         self.speed += vecteur_directeur_2    
@@ -573,8 +573,8 @@ def main():
 
 
 
-    nb_boids = 10
-    nb_predators = 0
+    nb_boids = 100
+    nb_predators = 4
 
     #colour, len, speed_max, max_force, speed_max_flew, max_force_flew, distance_separation, distance_alignement, distance_cohesion
     list_boids = np.array([Boids(WIDTH, HEIGHT, WHITE, 10, 2, 0.5, 4, 0.5, 20, 40, 70) for _ in range(nb_boids)])

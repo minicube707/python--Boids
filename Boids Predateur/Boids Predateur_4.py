@@ -2,7 +2,6 @@ import pygame
 import math
 import numpy as np
 import random
-from numba import jit
 
 pygame.init()
 
@@ -22,7 +21,6 @@ WIN.fill(BLUE_OCEAN)
 # Définit le titre de la fenêtre
 pygame.display.set_caption("Basic pygame")
 
-
 """"""""""""""""""""""""""""""""""""""
 #Version super optimisé avec le tableau des distances et la révision du code pour augmenter la performance
 #Ajout des prédators et révision du code pour plus de réalisme
@@ -34,13 +32,12 @@ pygame.display.set_caption("Basic pygame")
 #Ajout de la séparation pour les prédateur pour plus de réalisme
 """"""""""""""""""""""""""""""""""""""
 
-@jit(nopython = True)
 class Animoid():
 
     tab_norme = np.array([[]])
 
     def __init__(self,  colour, len, speed_max, max_force, distance_separation) -> None:
-        self.orientation = (np.random.rand(2) -0.5 ) * math.pi
+        self.orientation = (np.random.rand(2) - 0.5 ) * math.pi
         self.position = np.array([np.random.rand() * WIDTH, np.random.rand() * HEIGHT])
         self.colour = colour
         self.len = len
@@ -48,7 +45,7 @@ class Animoid():
         self.max_force = max_force
 
         #Vitesse
-        self.speed = (np.random.rand(2) -0.5 ) * 5
+        self.speed = (np.random.rand(2) - 0.5 ) * 5
         self.speed_max = speed_max 
 
 
@@ -66,8 +63,8 @@ class Animoid():
 
         #Vérifie que les boids ne sorte pas de l'écran
         if border == True:
-            if self.position[0] - 3*self.len < 0:
-                distance =  np.linalg.norm(np.array([0, self.position[1]] - self.position))
+            if self.position[0] - 3 * self.len < 0:
+                distance = np.linalg.norm(np.array([0, self.position[1]] - self.position))
                 diff = self.position - np.array([0, self.position[1]])
                 diff = diff / distance
                 vecteur_directeur = diff - self.speed
@@ -75,8 +72,8 @@ class Animoid():
                 add_speed += np.array([0, 1])
                 near_border = True
 
-            elif self.position[0] + 3*self.len > WIDTH:
-                distance =  np.linalg.norm(np.array([WIDTH, self.position[1]] - self.position))
+            elif self.position[0] + 3 * self.len > WIDTH:
+                distance = np.linalg.norm(np.array([WIDTH, self.position[1]] - self.position))
                 diff = self.position - np.array([WIDTH, self.position[1]])
                 diff = diff / distance
                 vecteur_directeur = diff - self.speed
@@ -84,8 +81,8 @@ class Animoid():
                 add_speed += np.array([0, - 1])
                 near_border = True
 
-            if self.position[1] - 3*self.len < 0:
-                distance =  np.linalg.norm(np.array([self.position[0], 0] - self.position))
+            if self.position[1] - 3 * self.len < 0:
+                distance = np.linalg.norm(np.array([self.position[0], 0] - self.position))
                 diff = self.position - np.array([self.position[0], 0])
                 diff = diff / distance
                 vecteur_directeur = diff - self.speed
@@ -93,8 +90,8 @@ class Animoid():
                 add_speed += np.array([-1, 0])
                 near_border = True
 
-            elif self.position[1] + 3*self.len > HEIGHT:
-                distance =  np.linalg.norm(np.array([self.position[0], HEIGHT] - self.position))
+            elif self.position[1] + 3 * self.len > HEIGHT:
+                distance = np.linalg.norm(np.array([self.position[0], HEIGHT] - self.position))
                 diff = self.position - np.array([self.position[0], HEIGHT])
                 diff = diff / distance
                 vecteur_directeur = diff - self.speed
@@ -145,17 +142,17 @@ class Animoid():
 
             #Sinon on recopie les valeurs déjà trouvers
             else:
-                list_norme = np.append(list_norme, Animoid.tab_norme[:, index-1])
+                list_norme = np.append(list_norme, Animoid.tab_norme[:, index -1])
 
             #Pour chaque autre boids, calcul des distances        
-            for other_boids in list_animoids[index+1:]:
+            for other_boids in list_animoids[index +1:]:
 
                 #Calcul des distances
                 norme = np.int32(np.linalg.norm(other_boids.position - self.position))
                 list_norme = np.append(list_norme, norme)
 
             Animoid.tab_norme = np.append(Animoid.tab_norme, list_norme)
-            Animoid.tab_norme = Animoid.tab_norme.reshape((index+1, len(list_animoids)-1))
+            Animoid.tab_norme = Animoid.tab_norme.reshape((index +1, len(list_animoids) -1))
 
     def draw(self):
         
@@ -192,7 +189,7 @@ class Animoid():
         
         #pygame.draw.circle(WIN, BLACK, position, 100, 2)
 
-@jit(nopython = True)
+
 class Boids(Animoid):
     
     def __init__(self, colour, len, speed_max, max_force, speed_max_flew, max_force_flew, distance_separation, distance_alignement, distance_cohesion) -> None:
@@ -322,7 +319,7 @@ class Boids(Animoid):
                 vecteur_directeur_2 = vecteur_to_com - self.speed
                 
                 #Normalisation du vecteur directeur
-                if np.linalg.norm(vecteur_directeur_2)> self.max_force:
+                if np.linalg.norm(vecteur_directeur_2) > self.max_force:
                     vecteur_directeur_2 = (vecteur_directeur_2 / np.linalg.norm(vecteur_directeur_2)) * self.max_force
     
             if total_separation > 0:
@@ -333,14 +330,14 @@ class Boids(Animoid):
                 vecteur_directeur_3 = average_vecteur_3 - self.speed
                     
                 #Normalisation du vecteur directeur
-                if np.linalg.norm(vecteur_directeur_3)> self.max_force:
+                if np.linalg.norm(vecteur_directeur_3) > self.max_force:
                     vecteur_directeur_3 = (vecteur_directeur_3 /(np.linalg.norm(vecteur_directeur_3) + epsilon)) * self.max_force
             
-            self.speed += vecteur_directeur_1  + vecteur_directeur_2 + vecteur_directeur_3
+            self.speed += vecteur_directeur_1 + vecteur_directeur_2 + vecteur_directeur_3
 
         return flew
 
-@jit(nopython = True)
+
 class Predator(Animoid):
 
     def __init__(self,  colour, len, speed_max, max_force, distance_chasse, distance_separation) -> None:
@@ -373,7 +370,7 @@ class Predator(Animoid):
                 #Séparation
                 diff = self.position - predator.position
                 average_vecteur_3 += diff
-                total_preda +=1
+                total_preda += 1
 
         #S'il y a un prédateurn, on s'éloingne un peu
         if total_preda > 0:
@@ -392,7 +389,7 @@ class Predator(Animoid):
 
                 #Chasse
                 center_mass += boid.position
-                total +=1
+                total += 1
 
         #Random
         rand = random.randint(1, 50)
